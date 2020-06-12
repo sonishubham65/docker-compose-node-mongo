@@ -1,0 +1,50 @@
+version: '3'
+
+services: 
+    dev:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        volumes: 
+            - .:/usr/src/app
+        working_dir: 
+            /usr/src/app
+        command: 
+            npm run start
+        ports:
+            - 80:3000
+        depends_on: 
+            - database
+        
+    database:
+        image: mongo:latest
+        container_name: mongocontainer
+        # environment: 
+        #     - MONGO_INITDB_DATABASE=ginger
+        #     - MONGO_INITDB_ROOT_USERNAME=user
+        #     - MONGO_INITDB_ROOT_PASSWORD=123456
+        volumes: 
+            - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+            - ./mongo-volume:/data/db
+        ports:
+            - '27017-27019:27017-27019'
+    # rs2:
+    #     container_name: rs2 
+    #     build: 
+    #         context: .
+    #         dockerfile: mongodb/two.Dockerfile
+    #     ports:
+    #         - 30002:27017
+    # rs3:
+    #     container_name: rs3
+    #     build: 
+    #         context: .
+    #         dockerfile: mongodb/three.Dockerfile
+    #     ports:
+    #         - 30003:27017
+    # final:
+    #     depends_on: 
+    #         - rs1
+    #         - rs2
+    #         - rs3
+    #     command: 
